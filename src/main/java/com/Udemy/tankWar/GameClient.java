@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class GameClient extends JComponent {
@@ -12,11 +13,16 @@ public class GameClient extends JComponent {
 
     private Tank playerTank;
     private List<Tank> enemyTanks;
-    // private List<wall> walls ;
+    private List<Wall> walls ;// 一共 4 面 墙 ，一面墙 由若干 砖块 组成
 
     public GameClient(){
         this.playerTank = new Tank(400 ,100 , Direction.DOWN);
-
+        this.walls = Arrays.asList(
+                new Wall(300 ,150 ,true , 8),
+                new Wall(300 ,300 ,true , 8),
+                new Wall( 150,120 ,false , 8),
+                new Wall( 650,120 ,false , 8)
+        );
         this.enemyTanks = new ArrayList<>(12);
         // 敌方 坦克 共 12 辆
         // 排放 成 3 排 4 列
@@ -33,9 +39,14 @@ public class GameClient extends JComponent {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
+        g.setColor(Color.BLACK);
+        g.fillRect(0,0,800,600);
         playerTank.draw(g);
         for (Tank enemyTank : enemyTanks){
             enemyTank.draw(g);
+        }
+        for (Wall wall : walls){
+            wall.draw(g);
         }
 
     }
