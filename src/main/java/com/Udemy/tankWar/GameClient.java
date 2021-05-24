@@ -4,13 +4,29 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GameClient extends JComponent {
 
+
     private Tank playerTank;
+    private List<Tank> enemyTanks;
+    // private List<wall> walls ;
 
     public GameClient(){
         this.playerTank = new Tank(400 ,100 , Direction.DOWN);
+
+        this.enemyTanks = new ArrayList<>(12);
+        // 敌方 坦克 共 12 辆
+        // 排放 成 3 排 4 列
+        for (int row = 0 ; row < 3 ; row++){
+            for (int col = 0; col < 4 ; col ++){
+                this.enemyTanks.add( new Tank(300 + 50 * col , 400 + 50 * row
+                        ,Direction.UP , true) );
+            }
+        }
+
         this.setPreferredSize(new Dimension(800,600));
     }
 
@@ -18,6 +34,9 @@ public class GameClient extends JComponent {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         playerTank.draw(g);
+        for (Tank enemyTank : enemyTanks){
+            enemyTank.draw(g);
+        }
 
     }
 
