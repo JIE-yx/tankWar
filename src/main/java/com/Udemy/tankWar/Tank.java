@@ -1,8 +1,7 @@
 package com.Udemy.tankWar;
 
-import com.sun.org.apache.bcel.internal.generic.SWITCH;
 
-import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.KeyEvent;
 
@@ -24,25 +23,14 @@ public class Tank {
         this.enemy = enemy;
     }
 
-    public int getX() {
-        return x;
-    }
 
-    public int getY() {
-        return y;
-    }
 
-    public void setX(int x) {
-        this.x = x;
-    }
 
     public void setDirection(Direction direction) {
         this.direction = direction;
     }
 
-    public void setY(int y) {
-        this.y = y;
-    }
+
 
     void move(){
         if ( this.stopped ){
@@ -144,6 +132,10 @@ public class Tank {
     }
 
     void draw(Graphics g){
+        // 先保存 坦克 上一次的位置
+        // 如果发生碰撞， 就 不更新坦克的位置
+        int oldX = x;
+        int oldY = y;
         // 画 坦克 之前 先要确定 坦克得方向
         // 然后 确定坦克 的 新位置
         // 然后 在 对应的 位置 画上 对应 朝向 的坦克
@@ -155,7 +147,30 @@ public class Tank {
         x = Math.max( 0 , Math.min(x , 800 - getImage().getWidth(null)  )  );
         y = Math.max( 0 , Math.min(y , 600 - getImage().getHeight(null)  )  );
 
+        // 坦克 和 墙壁 的碰撞检测
+        Rectangle tankRec = this.getRectangle();
+        for (Wall wall : GameClient.getInstance().getWalls()){
+            if ( tankRec.intersects(wall.getRectangel()) ){
+                x = oldX;
+                y = oldY;
+                break ;
+            }
+        }
+
+        for (Tank enemyTank : GameClient.getInstance().getEnemyTanks()){
+            if ( tankRec.intersects(enemyTank.getRectangle()) ){
+                x = oldX;
+                y = oldY;
+                break;
+            }
+        }
+
         g.drawImage(this.getImage(), this.x,this.y, null);
+    }
+
+    public Rectangle getRectangle(){
+        return new Rectangle(x , y
+                , getImage().getWidth(null) ,getImage().getHeight(null));
     }
 
     private boolean stopped;

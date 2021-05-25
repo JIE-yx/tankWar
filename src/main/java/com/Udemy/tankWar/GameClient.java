@@ -10,10 +10,25 @@ import java.util.List;
 
 public class GameClient extends JComponent {
 
+    // 单例模式
+    private static final GameClient Instance = new GameClient();
+
+    public static GameClient getInstance(){
+        return Instance;
+    }
+
 
     private Tank playerTank;
     private List<Tank> enemyTanks;
     private List<Wall> walls ;// 一共 4 面 墙 ，一面墙 由若干 砖块 组成
+
+    public List<Wall> getWalls() {
+        return walls;
+    }
+
+    public List<Tank> getEnemyTanks() {
+        return enemyTanks;
+    }
 
     public GameClient(){
         this.playerTank = new Tank(400 ,100 , Direction.DOWN);
@@ -26,9 +41,9 @@ public class GameClient extends JComponent {
         this.enemyTanks = new ArrayList<>(12);
         // 敌方 坦克 共 12 辆
         // 排放 成 3 排 4 列
-        for (int row = 0 ; row < 3 ; row++){
-            for (int col = 0; col < 4 ; col ++){
-                this.enemyTanks.add( new Tank(300 + 50 * col , 400 + 50 * row
+        for (int row = 0 ; row < 2; row++){
+            for (int col = 0; col < 3 ; col ++){
+                this.enemyTanks.add( new Tank(300 + 100 * col , 400 + 100 * row
                         ,Direction.UP , true) );
             }
         }
