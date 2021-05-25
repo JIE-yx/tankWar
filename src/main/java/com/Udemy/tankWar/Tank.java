@@ -149,6 +149,12 @@ public class Tank {
         // 然后 在 对应的 位置 画上 对应 朝向 的坦克
         this.determineDirection();
         this.move();
+
+        //  0 <= x <= 800 - tankWidth
+        //  防止 坦克 越界
+        x = Math.max( 0 , Math.min(x , 800 - getImage().getWidth(null)  )  );
+        y = Math.max( 0 , Math.min(y , 600 - getImage().getHeight(null)  )  );
+
         g.drawImage(this.getImage(), this.x,this.y, null);
     }
 
