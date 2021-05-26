@@ -18,25 +18,7 @@ public class Missle {
     }
 
     Image getImage(){
-        switch (direction){
-            case UP:
-                return Tools.getImage( "missileU.gif");
-            case DOWN:
-                return Tools.getImage(  "missileD.gif");
-            case LEFT:
-                return Tools.getImage( "missileL.gif");
-            case RIGHT:
-                return Tools.getImage("missileR.gif");
-            case UPLEFT:
-                return Tools.getImage( "missileLU.gif");
-            case UPRIGHT:
-                return Tools.getImage("missileRU.gif");
-            case DOWNLEFT:
-                return Tools.getImage( "missileLD.gif");
-            case DOWNRIGHT:
-                return Tools.getImage( "missileRD.gif");
-        }
-        return null;
+        return direction.getImage("missile");
     }
 
     public void draw(Graphics g) {
@@ -63,19 +45,19 @@ public class Missle {
             case RIGHT:
                 x += speed;
                 break;
-            case UPLEFT:
+            case LEFT_UP:
                 x -= speed;
                 y -= speed;
                 break;
-            case UPRIGHT:
+            case RIGHT_UP:
                 x += speed;
                 y -= speed;
                 break;
-            case DOWNLEFT:
+            case LEFT_DOWN:
                 x -= speed;
                 y += speed;
                 break;
-            case DOWNRIGHT:
+            case RIGHT_DOWN:
                 x += speed;
                 y += speed;
                 break;

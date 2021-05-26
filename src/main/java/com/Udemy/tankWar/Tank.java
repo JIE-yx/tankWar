@@ -5,7 +5,6 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 
 
-
 public class Tank {
 
     private File shootSoundFile = new File("assets/audios/shoot.wav");
@@ -53,19 +52,19 @@ public class Tank {
             case RIGHT:
                 x += 5;
                 break;
-            case UPLEFT:
+            case LEFT_UP:
                 x -= 5;
                 y -= 5;
                 break;
-            case UPRIGHT:
+            case RIGHT_UP:
                 x += 5;
                 y -= 5;
                 break;
-            case DOWNLEFT:
+            case LEFT_DOWN:
                 x -= 5;
                 y += 5;
                 break;
-            case DOWNRIGHT:
+            case RIGHT_DOWN:
                 x += 5;
                 y += 5;
                 break;
@@ -74,25 +73,7 @@ public class Tank {
 
     Image getImage(){
         String prefix = this.enemy ? "e" : "";
-        switch (direction){
-            case UP:
-                return Tools.getImage(prefix + "tankU.gif");
-            case DOWN:
-                return Tools.getImage(prefix + "tankD.gif");
-            case LEFT:
-                return Tools.getImage(prefix + "tankL.gif");
-            case RIGHT:
-                return Tools.getImage(prefix + "tankR.gif");
-            case UPLEFT:
-                return Tools.getImage(prefix + "tankLU.gif");
-            case UPRIGHT:
-                return Tools.getImage(prefix + "tankRU.gif");
-            case DOWNLEFT:
-                return Tools.getImage(prefix + "tankLD.gif");
-            case DOWNRIGHT:
-                return Tools.getImage(prefix + "tankRD.gif");
-        }
-        return null;
+        return direction.getImage(prefix + "tank");
     }
 
     private boolean up , down , left , right;
@@ -114,6 +95,9 @@ public class Tank {
                 break;
             case KeyEvent.VK_CONTROL:
                 fire();
+                break;
+            case KeyEvent.VK_A:
+                superFire();
                 break;
         }
 
@@ -137,8 +121,7 @@ public class Tank {
         }
     }
 
-    void playShootSound(){
-
+    void playShootAudio(){
         // 炮弹 发射时 的声音
         try {
         //    File yourFile;
@@ -159,14 +142,23 @@ public class Tank {
         }
     }
 
+
+
     void fire(){
         Missle missle = new Missle(x + getImage().getWidth(null) / 2 - 6
                         ,y + getImage().getHeight(null) / 2 - 6
                         , enemy , direction);
         GameClient.getInstance().getMissles().add(missle);
-        playShootSound();
-
-
+        playShootAudio();
+    }
+    void superFire(){
+        for (Direction direction : Direction.values()){
+            Missle missle = new Missle(x + getImage().getWidth(null) / 2 - 6
+                    ,y + getImage().getHeight(null) / 2 - 6
+                    , enemy , direction);
+            GameClient.getInstance().getMissles().add(missle);
+        }
+        playShootAudio();
     }
 
     void draw(Graphics g){
@@ -225,11 +217,11 @@ public class Tank {
             // 定义 8 个 方向
             // 上左
             if ( up && left && !down && !right ){
-                this.direction = Direction.UPLEFT;
+                this.direction = Direction.LEFT_UP;
             }
             // 上右
             else if ( up && !left && !down && right ){
-                this.direction = Direction.UPRIGHT;
+                this.direction = Direction.RIGHT_UP;
             }
             // 上
             else if ( up && !left && !down && !right  ){
@@ -249,11 +241,11 @@ public class Tank {
             }
             // 下左
             else if ( !up && left && down && !right ){
-                this.direction = Direction.DOWNLEFT;
+                this.direction = Direction.LEFT_DOWN;
             }
             // 下右
             else if ( !up && !left && down && right ){
-                this.direction = Direction.DOWNRIGHT;
+                this.direction = Direction.RIGHT_DOWN;
             }
 
         }
