@@ -7,7 +7,7 @@ import java.awt.event.KeyEvent;
 
 public class Tank {
 
-    private File shootSoundFile = new File("assets/audios/shoot.wav");
+
     private int speed = 5;
     private int x;
     private int y;
@@ -117,26 +117,6 @@ public class Tank {
         }
     }
 
-    void playShootAudio(){
-        // 炮弹 发射时 的声音
-        try {
-        //    File yourFile;
-            AudioInputStream stream;
-            AudioFormat format;
-            DataLine.Info info;
-            Clip clip;
-        //    yourFile = new File("assets/audios/shoot.wav");
-            stream = AudioSystem.getAudioInputStream(shootSoundFile);
-            format = stream.getFormat();
-            info = new DataLine.Info(Clip.class, format);
-            clip = (Clip) AudioSystem.getLine(info);
-            clip.open(stream);
-            clip.start();
-        }
-        catch (Exception e) {
-            //whatevers
-        }
-    }
 
 
 
@@ -145,7 +125,8 @@ public class Tank {
                         ,y + getImage().getHeight(null) / 2 - 6
                         , enemy , direction);
         GameClient.getInstance().addMissle(missle);
-        playShootAudio();
+        Tools.playAudio("shoot.wav");
+
     }
     void superFire(){
         for (Direction direction : Direction.values()){
@@ -154,7 +135,8 @@ public class Tank {
                     , enemy , direction);
             GameClient.getInstance().getMissles().add(missle);
         }
-        playShootAudio();
+        Tools.playAudio("shoot.wav");
+
     }
 
     void draw(Graphics g){

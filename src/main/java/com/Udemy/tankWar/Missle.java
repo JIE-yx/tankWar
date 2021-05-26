@@ -33,7 +33,7 @@ public class Missle {
     public void draw(Graphics g) {
         move();
         // 如果 子弹 越界
-        // 或者 子弹 与 其他 坦克 碰撞
+        // 或者 子弹 与 墙壁 碰撞
         // 子弹 消失 ， 并且 从 GameClient 的 missles 列表重 移除
         if ( x < 0 || x > 800 || y < 0 || y > 600 ){
             this.setAlive(false);
@@ -49,7 +49,7 @@ public class Missle {
         }
 
         // 检测 子弹 与 坦克 发生碰撞
-
+        // 子弹 消失 ， 并且 从 GameClient 的 missles 列表重 移除
         // 如果 是 敌方 的子弹， 只需要检测 是否 与 我方坦克发生 碰撞
         if ( enemy ){
             Tank playerTank = GameClient.getInstance().getPlayerTank();
@@ -57,6 +57,7 @@ public class Missle {
                 playerTank.setHp(playerTank.getHp() - 20);
                 if ( playerTank.getHp() <= 0 ){
                     playerTank.setAlive(false);
+                    addExplosion(new Explosion(x , y));
                 }
                 GameClient.getInstance().getPlayerTank().setAlive(false);
                 this.setAlive(false);
@@ -68,15 +69,17 @@ public class Missle {
                 if ( rectangle.intersects(tank.getRectangle()) ){
                     tank.setAlive(false);
                     this.setAlive(false);
+                    addExplosion(new Explosion(x , y));
                     return;
                 }
             }
         }
-
-
-
         g.drawImage(getImage() , x, y , null);
+    }
 
+    void addExplosion(Explosion e  ){
+        GameClient.getInstance().addExplosion(e);
+        Tools.playAudio("explode.wav");
     }
 
     void move(){

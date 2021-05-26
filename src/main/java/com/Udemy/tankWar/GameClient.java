@@ -30,6 +30,7 @@ public class GameClient extends JComponent {
     private List<Tank> enemyTanks;
     private List<Wall> walls ;// 一共 4 面 墙 ，一面墙 由若干 砖块 组成
     private List<Missle> missles;
+    private List<Explosion> explosions;
 
     public List<Wall> getWalls() {
         return walls;
@@ -38,6 +39,14 @@ public class GameClient extends JComponent {
     public List<Tank> getEnemyTanks() {
         return enemyTanks;
     }
+
+    void addExplosion(Explosion e){
+        explosions.add(e);
+    }
+
+
+
+
 
     public List<Missle> getMissles() {
         return missles;
@@ -52,6 +61,7 @@ public class GameClient extends JComponent {
 //    }
 
     public GameClient(){
+        this.explosions = new ArrayList<>();
         this.playerTank = new Tank(400 ,100 , Direction.DOWN);
         this.walls = Arrays.asList(
                 new Wall(300 ,150 ,true , 8),
@@ -97,6 +107,13 @@ public class GameClient extends JComponent {
         for (Missle missle : missles){
             missle.draw(g);
         }
+
+        explosions.removeIf(t -> !t.isAlive());
+        for (Explosion explosion : explosions){
+            explosion.draw(g);
+        }
+
+
 
     }
 
