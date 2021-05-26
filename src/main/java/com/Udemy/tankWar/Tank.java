@@ -109,6 +109,9 @@ public class Tank {
             case KeyEvent.VK_RIGHT:
                 right = true;
                 break;
+            case KeyEvent.VK_CONTROL:
+                fire();
+                break;
         }
 
     }
@@ -129,6 +132,13 @@ public class Tank {
                 right = false;
                 break;
         }
+    }
+
+    void fire(){
+        Missle missle = new Missle(x + getImage().getWidth(null) / 2 - 6
+                        ,y + getImage().getHeight(null) / 2 - 6
+                        , enemy , direction);
+        GameClient.getInstance().getMissles().add(missle);
     }
 
     void draw(Graphics g){

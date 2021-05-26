@@ -21,6 +21,7 @@ public class GameClient extends JComponent {
     private Tank playerTank;
     private List<Tank> enemyTanks;
     private List<Wall> walls ;// 一共 4 面 墙 ，一面墙 由若干 砖块 组成
+    private List<Missle> missles;
 
     public List<Wall> getWalls() {
         return walls;
@@ -28,6 +29,10 @@ public class GameClient extends JComponent {
 
     public List<Tank> getEnemyTanks() {
         return enemyTanks;
+    }
+
+    public List<Missle> getMissles() {
+        return missles;
     }
 
     public GameClient(){
@@ -38,6 +43,7 @@ public class GameClient extends JComponent {
                 new Wall( 150,120 ,false , 8),
                 new Wall( 650,120 ,false , 8)
         );
+        this.missles = new ArrayList<>();
         this.enemyTanks = new ArrayList<>(12);
         // 敌方 坦克 共 12 辆
         // 排放 成 3 排 4 列
@@ -63,6 +69,9 @@ public class GameClient extends JComponent {
         for (Wall wall : walls){
             wall.draw(g);
         }
+        for (Missle missle : missles){
+            missle.draw(g);
+        }
 
     }
 
@@ -70,7 +79,7 @@ public class GameClient extends JComponent {
         JFrame frame = new JFrame();
         frame.setTitle("坦克大战1.0");
         frame.setIconImage(new ImageIcon("assets/images/icon.png").getImage());
-        GameClient client = new GameClient();
+        GameClient client = GameClient.getInstance();
         client.repaint();
         frame.add(client);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
