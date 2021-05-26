@@ -8,7 +8,7 @@ import java.awt.event.KeyEvent;
 public class Tank {
 
     private File shootSoundFile = new File("assets/audios/shoot.wav");
-
+    private int speed = 5;
     private int x;
     private int y;
     private Direction direction;
@@ -35,40 +35,14 @@ public class Tank {
 
 
     void move(){
+
         if ( this.stopped ){
             return;
         }
 
-        switch (direction){
-            case UP:
-                y -= 5;
-                break;
-            case DOWN:
-                y += 5;
-                break;
-            case LEFT:
-                x -= 5;
-                break;
-            case RIGHT:
-                x += 5;
-                break;
-            case LEFT_UP:
-                x -= 5;
-                y -= 5;
-                break;
-            case RIGHT_UP:
-                x += 5;
-                y -= 5;
-                break;
-            case LEFT_DOWN:
-                x -= 5;
-                y += 5;
-                break;
-            case RIGHT_DOWN:
-                x += 5;
-                y += 5;
-                break;
-        }
+        x += direction.xFactor * speed;
+        y += direction.yFactor * speed;
+
     }
 
     Image getImage(){
