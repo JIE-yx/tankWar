@@ -3,6 +3,7 @@ import java.io.File;
 import javax.sound.sampled.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.util.Random;
 
 
 public class Tank {
@@ -67,6 +68,14 @@ public class Tank {
 
     }
 
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
     Image getImage(){
         String prefix = this.enemy ? "e" : "";
         return direction.getImage(prefix + "tank");
@@ -95,6 +104,7 @@ public class Tank {
             case KeyEvent.VK_A:
                 superFire();
                 break;
+            case KeyEvent.VK_F2: GameClient.getInstance().restart();
         }
 
     }
@@ -147,7 +157,10 @@ public class Tank {
         // 画 坦克 之前 先要确定 坦克得方向
         // 然后 确定坦克 的 新位置
         // 然后 在 对应的 位置 画上 对应 朝向 的坦克
-        this.determineDirection();
+
+        if ( !enemy ){
+            this.determineDirection();
+        }
         this.move();
 
         //  0 <= x <= 800 - tankWidth
@@ -165,13 +178,34 @@ public class Tank {
             }
         }
 
+
+        // this可能时友方坦克 也可能是 敌方坦克
+        // 用来 防止 坦克 间 的碰撞
         for (Tank enemyTank : GameClient.getInstance().getEnemyTanks()){
-            if ( tankRec.intersects(enemyTank.getRectangle()) ){
+            if ( enemyTank != this && tankRec.intersects(enemyTank.getRectangle()) ){
                 x = oldX;
                 y = oldY;
                 break;
             }
         }
+
+        if ( enemy && this.getRectangle().intersects
+                (GameClient.getInstance().getPlayerTank().getRectangle()) ){
+            x = oldX;
+            y = oldY;
+        }
+
+        if ( !enemy ){
+            g.setColor(Color.WHITE);
+            g.fillRect(x , y - 10 ,
+                    this.getImage().getWidth(null) ,10);
+            g.setColor(Color.RED);
+            int width = hp * this.getImage().getWidth(null) / 100 ;
+            g.fillRect(x , y - 10 , width , 10 );
+
+        }
+
+
 
         g.drawImage(this.getImage(), this.x,this.y, null);
     }
@@ -231,4 +265,20 @@ public class Tank {
 
     }
 
+    private final Random random = new Random();
+
+    private int interval = random.nextInt(12) + 6;
+
+
+    void actRandomly() {
+        Direction[] dir = Direction.values();
+        if ( interval == 0 ) {
+            interval = random.nextInt(12) + 6;
+            direction = dir[random.nextInt(8)];
+            if (random.nextBoolean()) {
+                fire();
+            }
+        }
+        interval--;
+    }
 }

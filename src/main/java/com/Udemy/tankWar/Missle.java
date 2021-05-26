@@ -59,7 +59,6 @@ public class Missle {
                     playerTank.setAlive(false);
                     addExplosion(new Explosion(x , y));
                 }
-                GameClient.getInstance().getPlayerTank().setAlive(false);
                 this.setAlive(false);
                 return;
             }
