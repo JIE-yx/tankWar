@@ -1,11 +1,14 @@
 package com.Udemy.tankWar;
-
-
-
+import java.io.File;
+import javax.sound.sampled.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 
+
+
 public class Tank {
+
+    private File shootSoundFile = new File("assets/audios/shoot.wav");
 
     private int x;
     private int y;
@@ -134,11 +137,36 @@ public class Tank {
         }
     }
 
+    void playShootSound(){
+
+        // 炮弹 发射时 的声音
+        try {
+        //    File yourFile;
+            AudioInputStream stream;
+            AudioFormat format;
+            DataLine.Info info;
+            Clip clip;
+        //    yourFile = new File("assets/audios/shoot.wav");
+            stream = AudioSystem.getAudioInputStream(shootSoundFile);
+            format = stream.getFormat();
+            info = new DataLine.Info(Clip.class, format);
+            clip = (Clip) AudioSystem.getLine(info);
+            clip.open(stream);
+            clip.start();
+        }
+        catch (Exception e) {
+            //whatevers
+        }
+    }
+
     void fire(){
         Missle missle = new Missle(x + getImage().getWidth(null) / 2 - 6
                         ,y + getImage().getHeight(null) / 2 - 6
                         , enemy , direction);
         GameClient.getInstance().getMissles().add(missle);
+        playShootSound();
+
+
     }
 
     void draw(Graphics g){

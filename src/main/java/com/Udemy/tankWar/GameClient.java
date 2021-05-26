@@ -76,6 +76,7 @@ public class GameClient extends JComponent {
     }
 
     public static void main(String[] args) {
+        com.sun.javafx.application.PlatformImpl.startup(()->{});
         JFrame frame = new JFrame();
         frame.setTitle("坦克大战1.0");
         frame.setIconImage(new ImageIcon("assets/images/icon.png").getImage());
