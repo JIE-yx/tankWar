@@ -4,6 +4,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -19,6 +22,11 @@ public class GameClient extends JComponent {
 
 
     private Tank playerTank;
+
+    Tank getPlayerTank() {
+        return playerTank;
+    }
+
     private List<Tank> enemyTanks;
     private List<Wall> walls ;// 一共 4 面 墙 ，一面墙 由若干 砖块 组成
     private List<Missle> missles;
@@ -35,6 +43,14 @@ public class GameClient extends JComponent {
         return missles;
     }
 
+    synchronized void addMissle(Missle missle){
+        missles.add(missle);
+    }
+
+//    synchronized void removeMissle(Missle missle){
+//        missles.remove(missle);
+//    }
+
     public GameClient(){
         this.playerTank = new Tank(400 ,100 , Direction.DOWN);
         this.walls = Arrays.asList(
@@ -44,6 +60,12 @@ public class GameClient extends JComponent {
                 new Wall( 650,120 ,false , 8)
         );
         this.missles = new ArrayList<>();
+        this.initialEnemyTanks();
+
+        this.setPreferredSize(new Dimension(800,600));
+    }
+
+    private void initialEnemyTanks() {
         this.enemyTanks = new ArrayList<>(12);
         // 敌方 坦克 共 12 辆
         // 排放 成 3 排 4 列
@@ -53,8 +75,6 @@ public class GameClient extends JComponent {
                         ,Direction.UP , true) );
             }
         }
-
-        this.setPreferredSize(new Dimension(800,600));
     }
 
     @Override
@@ -63,12 +83,17 @@ public class GameClient extends JComponent {
         g.setColor(Color.BLACK);
         g.fillRect(0,0,800,600);
         playerTank.draw(g);
+        enemyTanks.removeIf(t -> !t.isAlive());
+        if ( enemyTanks.isEmpty() ){
+            this.initialEnemyTanks();
+        }
         for (Tank enemyTank : enemyTanks){
             enemyTank.draw(g);
         }
         for (Wall wall : walls){
             wall.draw(g);
         }
+        missles.removeIf(t -> !t.isAlive());
         for (Missle missle : missles){
             missle.draw(g);
         }
@@ -76,6 +101,8 @@ public class GameClient extends JComponent {
     }
 
     public static void main(String[] args) {
+
+
         com.sun.javafx.application.PlatformImpl.startup(()->{});
         JFrame frame = new JFrame();
         frame.setTitle("坦克大战1.0");

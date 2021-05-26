@@ -13,6 +13,28 @@ public class Tank {
     private int y;
     private Direction direction;
     private boolean enemy; // 坦克 是敌是友 ？
+    private boolean alive = true;
+    private int hp = 100;
+
+    public int getHp() {
+        return hp;
+    }
+
+    public void setHp(int hp) {
+        this.hp = hp;
+    }
+
+    boolean isAlive() {
+        return alive;
+    }
+
+    void setAlive(boolean alive) {
+        this.alive = alive;
+    }
+
+    public boolean isEnemy() {
+        return enemy;
+    }
 
     public Tank(int x, int y, Direction direction) {
         this( x , y , direction , false );
@@ -122,7 +144,7 @@ public class Tank {
         Missle missle = new Missle(x + getImage().getWidth(null) / 2 - 6
                         ,y + getImage().getHeight(null) / 2 - 6
                         , enemy , direction);
-        GameClient.getInstance().getMissles().add(missle);
+        GameClient.getInstance().addMissle(missle);
         playShootAudio();
     }
     void superFire(){
