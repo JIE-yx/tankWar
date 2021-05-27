@@ -121,6 +121,7 @@ public class GameClient extends JComponent {
         g.drawString("Player HP: " + playerTank.getHp() , 10 , 25);
         g.drawString("Enemy Left: " + enemyTanks.size() , 10 , 50);
         g.drawString("Enemy killed: " + enemyTankKilled.get() , 10 , 75);
+        g.drawImage(Tools.getImage("tree.png") , 920 , 920 , null);
 
 
 
