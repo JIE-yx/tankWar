@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class GameClient extends JComponent {
 
@@ -23,6 +24,7 @@ public class GameClient extends JComponent {
         return Instance;
     }
 
+    private AtomicInteger enemyTankKilled = new AtomicInteger();
 
     private Tank playerTank;
 
@@ -70,20 +72,25 @@ public class GameClient extends JComponent {
                 new Wall(300 ,150 ,true , 8),
                 new Wall(300 ,300 ,true , 8),
                 new Wall( 150,120 ,false , 8),
-                new Wall( 650,120 ,false , 8)
+                new Wall( 650,120 ,false , 8),
+
+                new Wall( 800,600 ,true , 4),
+                new Wall( 150,120 ,false , 4),
+                new Wall( 800,300 ,true , 4),
+                new Wall( 150,700 ,false , 4)
         );
         this.missles = new CopyOnWriteArrayList<>();
         this.initialEnemyTanks();
 
-        this.setPreferredSize(new Dimension(800,600));
+        this.setPreferredSize(new Dimension(1000,1000));
     }
 
     private void initialEnemyTanks() {
         this.enemyTanks = new CopyOnWriteArrayList<>();
         // 敌方 坦克 共 12 辆
         // 排放 成 3 排 4 列
-        for (int row = 0 ; row < 3; row++){
-            for (int col = 0; col < 4 ; col ++){
+        for (int row = 0 ; row < 6; row++){
+            for (int col = 0; col < 5 ; col ++){
                 this.enemyTanks.add( new Tank(300 + 100 * col , 400 + 100 * row
                         ,Direction.UP , true) );
             }
@@ -94,8 +101,7 @@ public class GameClient extends JComponent {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         g.setColor(Color.BLACK);
-        g.fillRect(0,0,800,600);
-
+        g.fillRect(0,0,1000,1000);
         if ( !playerTank.isAlive() ){
             g.setColor(Color.RED);
             g.setFont(new Font(null , Font.BOLD , 100));
@@ -105,9 +111,20 @@ public class GameClient extends JComponent {
             gameOver = true;
             return ;
         }
-
         playerTank.draw(g);
+        int count = enemyTanks.size();
         enemyTanks.removeIf(t -> !t.isAlive());
+        enemyTankKilled.addAndGet( count - enemyTanks.size() );
+
+        g.setColor(Color.WHITE);
+        g.setFont(new Font(null , Font.BOLD , 17));
+        g.drawString("Player HP: " + playerTank.getHp() , 10 , 25);
+        g.drawString("Enemy Left: " + enemyTanks.size() , 10 , 50);
+        g.drawString("Enemy killed: " + enemyTankKilled.get() , 10 , 75);
+
+
+
+
         if ( enemyTanks.isEmpty() ){
             this.initialEnemyTanks();
         }
