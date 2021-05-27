@@ -4,12 +4,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -36,6 +35,8 @@ public class GameClient extends JComponent {
     private List<Wall> walls ;// 一共 4 面 墙 ，一面墙 由若干 砖块 组成
     private List<Missle> missles;
     private List<Explosion> explosions;
+    private Blood blood;
+    private final  static Random random = new Random();
 
     public List<Wall> getWalls() {
         return walls;
@@ -79,6 +80,7 @@ public class GameClient extends JComponent {
                 new Wall( 800,300 ,true , 4),
                 new Wall( 150,700 ,false , 4)
         );
+        this.blood = new Blood(450,450);
         this.missles = new CopyOnWriteArrayList<>();
         this.initialEnemyTanks();
 
@@ -97,6 +99,10 @@ public class GameClient extends JComponent {
         }
     }
 
+    public Blood getBlood() {
+        return blood;
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -112,6 +118,15 @@ public class GameClient extends JComponent {
             return ;
         }
         playerTank.draw(g);
+        //如果 坦克 生命值 较低 且 血包 已经 被 用过
+        // 按照 一定几率 刷新 血包
+        if ( playerTank.isDying() && random.nextInt(100) < 3 ) {
+            blood.setAlive(true);
+        }
+        if ( blood.isAlive() ){
+            blood.draw(g);
+        }
+
         int count = enemyTanks.size();
         enemyTanks.removeIf(t -> !t.isAlive());
         enemyTankKilled.addAndGet( count - enemyTanks.size() );
@@ -122,9 +137,6 @@ public class GameClient extends JComponent {
         g.drawString("Enemy Left: " + enemyTanks.size() , 10 , 50);
         g.drawString("Enemy killed: " + enemyTankKilled.get() , 10 , 75);
         g.drawImage(Tools.getImage("tree.png") , 920 , 920 , null);
-
-
-
 
         if ( enemyTanks.isEmpty() ){
             this.initialEnemyTanks();
@@ -145,14 +157,9 @@ public class GameClient extends JComponent {
         for (Explosion explosion : explosions){
             explosion.draw(g);
         }
-
-
-
     }
 
     public static void main(String[] args) {
-
-
         com.sun.javafx.application.PlatformImpl.startup(()->{});
         JFrame frame = new JFrame();
         frame.setTitle("坦克大战1.0");
@@ -176,8 +183,6 @@ public class GameClient extends JComponent {
                 client.playerTank.keyReleased(e);
             }
         });
-
-
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
         while ( true ){
@@ -195,9 +200,7 @@ public class GameClient extends JComponent {
                 e.printStackTrace();
             }
         }
-
     }
-
     void restart() {
         if ( ! playerTank.isAlive() ){
             this.playerTank = new Tank(400 ,100 , Direction.DOWN);;

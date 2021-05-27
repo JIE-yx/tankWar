@@ -35,7 +35,7 @@ public class Missle {
         // 如果 子弹 越界
         // 或者 子弹 与 墙壁 碰撞
         // 子弹 消失 ， 并且 从 GameClient 的 missles 列表重 移除
-        if ( x < 0 || x > 800 || y < 0 || y > 600 ){
+        if ( x < 0 || x > 1000 || y < 0 || y > 1000 ){
             this.setAlive(false);
             return ;
         }

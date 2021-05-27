@@ -4,18 +4,19 @@ import javax.sound.sampled.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 public class Tank {
 
-
+    private final int max_hp = 100;
     private int speed = 5;
     private int x;
     private int y;
     private Direction direction;
     private boolean enemy; // 坦克 是敌是友 ？
     private boolean alive = true;
-    private int hp = 100;
+    private int hp = max_hp;
 
     public int getHp() {
         return hp;
@@ -149,6 +150,10 @@ public class Tank {
 
     }
 
+    public boolean isDying(){
+        return this.hp <= max_hp * 0.25;
+    }
+
     void draw(Graphics g){
         // 先保存 坦克 上一次的位置
         // 如果发生碰撞， 就 不更新坦克的位置
@@ -165,8 +170,8 @@ public class Tank {
 
         //  0 <= x <= 800 - tankWidth
         //  防止 坦克 越界
-        x = Math.max( 0 , Math.min(x , 800 - getImage().getWidth(null)  )  );
-        y = Math.max( 0 , Math.min(y , 600 - getImage().getHeight(null)  )  );
+        x = Math.max( 0 , Math.min(x , 1000 - getImage().getWidth(null)  )  );
+        y = Math.max( 0 , Math.min(y , 1000 - getImage().getHeight(null)  )  );
 
         // 坦克 和 墙壁 的碰撞检测
         Rectangle tankRec = this.getRectangle();
@@ -196,11 +201,18 @@ public class Tank {
         }
 
         if ( !enemy ){
+            Blood blood = GameClient.getInstance().getBlood();
+            if ( blood.isAlive() && tankRec.intersects
+                    (GameClient.getInstance().getBlood().getRectangle()) ){
+                this.hp = max_hp;
+                Tools.playAudio("revive.wav");
+                blood.setAlive(false);
+            }
             g.setColor(Color.WHITE);
             g.fillRect(x , y - 10 ,
                     this.getImage().getWidth(null) ,10);
             g.setColor(Color.RED);
-            int width = hp * this.getImage().getWidth(null) / 100 ;
+            int width = hp * this.getImage().getWidth(null) / max_hp ;
             g.fillRect(x , y - 10 , width , 10 );
 
         }
@@ -267,13 +279,13 @@ public class Tank {
 
     private final Random random = new Random();
 
-    private int interval = random.nextInt(12) + 6;
+    private int interval = random.nextInt(10) + 3;
 
 
     void actRandomly() {
         Direction[] dir = Direction.values();
         if ( interval == 0 ) {
-            interval = random.nextInt(12) + 6;
+            interval = random.nextInt(10) + 3;
             direction = dir[random.nextInt(8)];
             if (random.nextBoolean()) {
                 fire();
